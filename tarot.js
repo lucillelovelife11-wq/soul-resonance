@@ -86,13 +86,48 @@ export const DECK=[
  {'id': 'Pentacles12', 'name': 'Queen of Pentacles', 'cn': '星币皇后', 'meaning': 'You may be looking for consistency and practical effort, not just promises. You may already know what kind of care is needed.', 'image': '/cards/Pentacles12.svg'},
  {'id': 'Pentacles13', 'name': 'King of Pentacles', 'cn': '星币国王', 'meaning': 'You may be looking for consistency and practical effort, not just promises. You might need to lead by example.', 'image': '/cards/Pentacles13.svg'},
 ];
-export function interpret(card){return card.meaning;}
-const labels=["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"];
+const majorNames=['Fool','Magician','High Priestess','Empress','Emperor','Hierophant','Lovers','Chariot','Strength','Hermit','Wheel of Fortune','Justice','Hanged Man','Death','Temperance','Devil','Tower','Star','Moon','Sun','Judgement','World'];
+const commons=(name)=>'https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent('RWS1909 - '+name+'.jpeg')+'?width=480';
+for(const c of DECK){
+  let file;
+  if(c.id.startsWith('M'))file=String(Number(c.id.slice(1))).padStart(2,'0')+' '+majorNames[Number(c.id.slice(1))];
+  else {const m=c.id.match(/^(Wands|Cups|Swords|Pentacles)(\d+)$/);file=m[1]+' '+String(Number(m[2])+1).padStart(2,'0');}
+  c.image=commons(file); delete c.cn;
+}
+const themes={
+ Wands:['the courage to say what you want','the risk of rushing past someone’s feelings'],
+ Cups:['the tenderness you may be hiding','the emotions that are hard to name'],
+ Swords:['the truth that needs room to breathe','the stories you tell yourself when you are hurt'],
+ Pentacles:['the quiet effort that builds trust','the fear of losing something familiar']
+};
+const reverseNotes=['What happens when this energy turns inward?','A pattern may be asking for attention rather than another promise.','Perhaps the obstacle is not a lack of love, but the way it is expressed.','You can protect your boundaries without building a wall.'];
+export function interpret(card,step,first,other,reversed=false){
+ const seed=card.meaning.replace(/\s+/g,' ').replace(/[.!?]+$/,'');
+ if(reversed){const i=card.id.split('').reduce((a,c)=>a+c.charCodeAt(0),0)%reverseNotes.length;return seed+'. Yet this card appears reversed: '+reverseNotes[i];}
+ return seed+'. What would change if you were honest about this, even in a small way?';
+}
+const labels=['Strongly disagree','Disagree','Neutral','Agree','Strongly agree'];
+export const ANGELS=[
+ {name:'Archangel Michael — Courage',message:'You do not have to win every battle to be brave. Sometimes courage is simply telling the truth gently.',symbol:'✧'},
+ {name:'Archangel Raphael — Healing',message:'Healing is not forgetting what hurt. It is learning to hold the memory without letting it steer every conversation.',symbol:'❦'},
+ {name:'Archangel Gabriel — Expression',message:'The words you are afraid to say may be the bridge you have been waiting for. Begin with one honest sentence.',symbol:'✦'},
+ {name:'Archangel Uriel — Clarity',message:'You cannot make every answer arrive today. Give the truth space to become visible.',symbol:'☼'},
+ {name:'Angel of Boundaries',message:'Love grows best where a yes can be wholehearted and a no can be respected.',symbol:'◇'},
+ {name:'Angel of Renewal',message:'A new chapter does not demand a perfect past. It asks for a different next step.',symbol:'✳'},
+ {name:'Angel of Patience',message:'Not every silence is rejection. Ask what the silence holds before filling it with fear.',symbol:'☾'},
+ {name:'Angel of Trust',message:'Trust is not a leap into darkness. It is a series of small promises kept in daylight.',symbol:'✴'},
+ {name:'Angel of Compassion',message:'You can understand someone’s pain without agreeing to carry it all.',symbol:'♡'},
+ {name:'Angel of New Beginnings',message:'The door does not open because you are fearless. It opens when you are willing to try.',symbol:'✺'}
+];
 export function report(room,viewer){
- const mine=room.draws.filter(d=>d.rater===viewer);const share=room.draws.filter(d=>d.rating?.visibility==="public"||d.rater===viewer);
+ const mine=room.draws.filter(d=>d.rater===viewer),visible=room.draws.filter(d=>d.rating?.visibility==='public'||d.rater===viewer);
  const avg=mine.length?mine.reduce((a,d)=>a+(d.rating?.value||3),0)/mine.length:3;
- const name=avg>=4?"Finding Resonance / 产生共鸣":avg<=2?"Seeing Things Differently / 重新认识":"Still Figuring It Out / 共同探索";
- const picked=mine.filter(d=>d.rating?.value>=4).slice(0,2);const topic=picked.length?picked.map(d=>d.card.meaning.replace(/[.!?]$/," ").toLowerCase()).join("and "):"we do not always understand each other right away";
- const reflection=`I know I don’t always say what I mean. Sometimes ${topic}. The truth is, I want us to feel heard without having to defend every feeling. I hope we can be more honest, more patient, and willing to meet each other halfway.`;
- return {name,model:"Inspired by the interpersonal circumplex (agency and connection). This is a conversation game, not a psychological assessment. / 参考人际环形模型，不属于心理测评。",personal:`Your average agreement: ${avg.toFixed(1)}/5. ${avg>=4?"Several prompts felt true to you.":avg<=2?"Many prompts did not match your experience, and that is useful to know.":"Your responses were mixed, which is completely okay."} / 你的平均认同度：${avg.toFixed(1)}/5。`,shared:share.map(d=>({name:room.players.find(p=>p.id===d.owner)?.name,card:d.card.name,question:d.question,score:d.rating?.value,label:labels[(d.rating?.value||3)-1],private:d.rating?.visibility==="private"})),suggestions:["Take turns sharing one thing you wish the other person understood. No interruptions.","Before disagreeing, repeat what you heard in your own words.","Ask: What is one small thing I could do differently this week?"],reflection,reflectionNote:"A sample first-person message inspired by YOUR ratings, not a claim about anyone else’s thoughts. / 基于你本人评分的示例表达，并不代表他人的真实想法。"};
+ const high=mine.filter(d=>d.rating?.value>=4),low=mine.filter(d=>d.rating?.value<=2);
+ const focus=high[0]||mine[0],challenge=low[0]||mine[mine.length-1];
+ const focusIdea=focus?focus.card.meaning.replace(/^(You |Your )/,'').replace(/[.!?]$/,'').toLowerCase():'I am still learning how to say what I need';
+ const challengeIdea=challenge?challenge.card.name.toLowerCase():'uncertainty';
+ const opening=high.length?'I know there is something real between us, even when we struggle to explain it.':'I know we do not always see the same story in the same way.';
+ const middle=low.length?'I have also noticed where our feelings do not match, and I do not want to pretend they do.':'I am learning to say what I need without expecting you to guess.';
+ const reflection=`${opening} ${middle} I think about ${challengeIdea} and what it reveals about the way we protect ourselves. The truth is, I want us to listen without turning every difference into a verdict. I hope we can choose one small, honest step toward each other.`;
+ return {name:avg>=4?'A Moment of Resonance':avg<=2?'A Different Perspective':'Between Questions and Answers',model:'Inspired by the interpersonal circumplex: connection and personal agency. This is a conversation prompt, not a psychological assessment.',personal:`Your average agreement: ${avg.toFixed(1)}/5. ${high.length} statements resonated strongly; ${low.length} felt unlike your experience.`,shared:visible.map(d=>({name:room.players.find(p=>p.id===d.owner)?.name,card:d.card.name,image:d.card.image,reversed:d.reversed,question:d.question,score:d.rating?.value,label:labels[(d.rating?.value||3)-1],private:d.rating?.visibility==='private'})),totalCards:room.draws.length,suggestions:['Share one thing you wish the other person understood. Let them finish before responding.','Ask what support looks like in practice, not just in theory.','Choose one small action you can both revisit next week.'],reflection,reflectionNote:'A fictional first-person reflection inspired by your responses. It does not claim to reveal anyone else’s private thoughts.',angel:room.angel};
 }

@@ -1,34 +1,15 @@
-# 心灵共感 Soul Resonance
+# Soul Resonance V3
 
-多人实时塔罗对话游戏，适用于 Handshake Create a Multiplayer Game 任务。
+English-only multiplayer tarot conversation game.
 
-## 功能
-- 2–8 人跨设备实时联机，6 位房间码与重连
-- 6 组牌阵，每人每轮抽 1 张，共 3 轮；78 张标准塔罗名称
-- Node.js `crypto.randomInt()` 独立随机抽牌，不读取玩家输入决定牌面
-- 题目指定评分人；五级量表；每次公开/私密选择
-- 每位玩家获得自己的报告，私密评分不发送给其他玩家
-- 游戏化 IPC 框架提示及沟通行动建议
+## Run
+`npm install` then `npm start`. Deploy as a Render Node Web Service.
 
-## 本地启动
-安装 Node.js 20+，在本目录运行：
+## Images and licensing
+The app links directly to Wikimedia Commons original Rider–Waite–Smith 1909 scans via `Special:FilePath` rather than bundling image files. This requires an internet connection, and some Commons file names may need verification. Original art: Pamela Colman Smith (1909), public domain. Modern recolorings are not included.
 
-```bash
-npm install
-npm start
-```
+## Gameplay
+Each player gets one private-to-them card per round (3 rounds). Each tarot card has a random upright/reversed orientation. With two players there are six total cards. The report offers an optional card reveal, showing only cards whose ratings are public or belong to the current player. A separate randomly chosen angel-inspired oracle message ends the report. Oracle messages and reflection text are authored game copy, not AI generated.
 
-打开 http://localhost:3000 。在同一局中用两个浏览器或设备测试。
-
-## 公开部署（Render）
-1. 将整个文件夹上传到 GitHub 仓库（不要上传 node_modules）。
-2. Render → New → Blueprint，连接 GitHub 仓库并选择 `render.yaml`。
-3. 部署后复制 Render 给出的 HTTPS URL，发给其他玩家。
-4. 在 Handshake Submit project 填写公开 URL、项目介绍和封面截图。
-
-## 已知限制 / V1 范围
-- **AI 尚未接入**：解读由牌义模板生成，最终报告为规则驱动的个性化总结；不可宣称已经实现 GPT 实时分析。下一版本需服务端调用模型 API，妥善保管 API 密钥并加入隐私同意机制。
-- 房间存于服务器内存，服务重启或休眠会丢失；适用于原型和现场试玩。生产环境应换成 Redis/数据库并配置多实例同步。
-- 当前不展示完整牌面插画，以免使用未经授权的牌面版权素材。
-- 隐私评分仅对对应玩家返回，但数据仍保留于服务器内存。不要输入敏感隐私信息。
-- 牌义与 IPC 标签仅用于反思与对话，不是临床评估。
+## Limitations
+No LLM API is connected. The report uses deterministic template logic; there is no claim of true mind-reading. Room state is in memory and resets on Render restart.
