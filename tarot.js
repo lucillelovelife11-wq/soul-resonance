@@ -1,3 +1,4 @@
+import meanings from './tarot-meanings.json' with { type: 'json' };
 export const SPREADS={
  mirrors:{title:'Through Your Eyes',subtitle:'Understanding each other',steps:[{question:'How does {other} see me?',rater:'next'},{question:'How do I see {other}?',rater:'self'},{question:'What do I want for my relationship with {other}?',rater:'self'}]},
  unsaid:{title:'What We Never Say',subtitle:'Honest conversations',steps:[{question:'What is really bothering me?',rater:'self'},{question:'What do I wish others understood about my feelings?',rater:'self'},{question:'What am I willing to try to repair this relationship?',rater:'self'}]},
@@ -5,6 +6,15 @@ export const SPREADS={
  family:{title:'Family Ties',subtitle:'Care and connection',steps:[{question:'How do I usually feel around my family?',rater:'self'},{question:'What do I wish my family understood about me?',rater:'self'},{question:'What kind of home atmosphere do I want?',rater:'self'}]},
  friendship:{title:'Friendship Compass',subtitle:'Trust and appreciation',steps:[{question:'What might my friends value in me?',rater:'self'},{question:'What side of me do I want my friends to see?',rater:'self'},{question:'What memories do I want us to make?',rater:'self'}]},
  differences:{title:'Finding Common Ground',subtitle:'Working through differences',steps:[{question:'What matters most to me in this disagreement?',rater:'self'},{question:'What perspective might I be missing?',rater:'self'},{question:'What compromise could I accept?',rater:'self'}]},
+};
+export const SOLO_SPREADS={
+ career:{title:'Career & Studies',subtitle:'Where you stand, what holds you back, and what to do next',steps:[
+  {question:'Where am I in my career or studies right now?'},{question:'What strength can I rely on?'},{question:'What is my biggest obstacle?'},{question:'What opportunity deserves my attention?'},{question:'What practical next step should I take?'}]},
+ choice:{title:'Two Paths',subtitle:'Compare two options without giving away your power to choose',steps:[
+  {question:'What do I really need from this decision?'},{question:'What could I gain from Option A?'},{question:'What might Option A cost me?'},{question:'What could I gain from Option B?'},{question:'What might Option B cost me?'},{question:'What should guide my final choice?'}]},
+ perception:{title:'How They May See Me',subtitle:'Reflect on a connection without claiming to read minds',steps:[
+  {question:'What impression might I give this person?'},{question:'What could be misunderstood between us?'},{question:'What can I do to understand this connection better?'}]},
+ yesno:{title:'Yes or No?',subtitle:'One card, one question, and a nuanced reflection',steps:[{question:'What does this card suggest I consider before deciding?'}]}
 };
 export const DECK=[
  {'id': 'M0', 'name': 'The Fool', 'cn': '愚者', 'meaning': 'You may be ready to try something new, even if you are nervous.', 'image': '/cards/M0.svg'},
@@ -101,10 +111,49 @@ const themes={
  Pentacles:['the quiet effort that builds trust','the fear of losing something familiar']
 };
 const reverseNotes=['What happens when this energy turns inward?','A pattern may be asking for attention rather than another promise.','Perhaps the obstacle is not a lack of love, but the way it is expressed.','You can protect your boundaries without building a wall.'];
+const openings=[
+  'There is a choice here that deserves more than a quick answer.',
+  'Something you have been carrying may finally need a name.',
+  'The quiet part of this story matters as much as the visible one.',
+  'This card points to a pattern worth noticing, not a verdict.',
+  'A relationship can be meaningful and still ask something difficult of you.',
+  'Sometimes the turning point is less dramatic than we imagine.'
+];
+const endings=[
+  'Notice where your actions and your wishes begin to disagree.',
+  'You may not need certainty before you ask for clarity.',
+  'What you protect can reveal what you fear losing.',
+  'A boundary can be an invitation to honesty, not a punishment.',
+  'The next step might be to listen without preparing a defense.',
+  'Ask yourself what you would choose if you did not have to prove anything.',
+  'Not every distance means rejection; sometimes it is a request for space.',
+  'Let the answer be specific: what would care look like this week?'
+];
+const contexts=[
+  (a,b)=>`In a relationship, ${a} can become a question of ${b}.`,
+  (a,b)=>`Sometimes ${a} looks like ${b} when two people want different things.`,
+  (a,b)=>`Between two people, ${a} often shows up in the small choices around ${b}.`,
+  (a,b)=>`You may notice ${a} most clearly when ${b} feels difficult.`,
+  (a,b)=>`The heart of this card is ${a}; the everyday test is ${b}.`
+];
+const insights=[
+  'A quiet truth can matter more than a dramatic promise.',
+  'You can care deeply and still need a different way forward.',
+  'Closeness grows when both people can be honest without performing certainty.',
+  'A difficult conversation is not the same as a broken connection.',
+  'What matters is not who wins the story, but what changes after it is told.',
+  'Sometimes the kindest next step is also the clearest one.',
+  'Trust is built in the ordinary moments nobody applauds.',
+  'There is room for affection and a boundary in the same sentence.',
+  'A little more clarity may be worth more than another grand gesture.',
+  'Being understood begins with saying something specific.'
+];
 export function interpret(card,step,first,other,reversed=false){
- const seed=card.meaning.replace(/\s+/g,' ').replace(/[.!?]+$/,'');
- if(reversed){const i=card.id.split('').reduce((a,c)=>a+c.charCodeAt(0),0)%reverseNotes.length;return seed+'. Yet this card appears reversed: '+reverseNotes[i];}
- return seed+'. What would change if you were honest about this, even in a small way?';
+ const meaningsForCard=meanings[card.name]||{upright:'reflection, choices',reversed:'resistance, uncertainty'};
+ const [a,b]=(reversed?meaningsForCard.reversed:meaningsForCard.upright).split(',').map(x=>x.trim());
+ const n=[...card.id+step.question+(reversed?'R':'U')].reduce((x,c)=>(x*33+c.charCodeAt(0))>>>0,5381);
+ const image=reversed?'The image is upside down: this may be a tension to notice, not a flaw to hide.':'The image is upright: consider where this quality is already present.';
+ return `${contexts[n%contexts.length](a,b)} ${image} ${insights[(n>>>3)%insights.length]}`;
 }
 const labels=['Strongly disagree','Disagree','Neutral','Agree','Strongly agree'];
 export const ANGELS=[
@@ -129,5 +178,16 @@ export function report(room,viewer){
  const opening=high.length?'I know there is something real between us, even when we struggle to explain it.':'I know we do not always see the same story in the same way.';
  const middle=low.length?'I have also noticed where our feelings do not match, and I do not want to pretend they do.':'I am learning to say what I need without expecting you to guess.';
  const reflection=`${opening} ${middle} I think about ${challengeIdea} and what it reveals about the way we protect ourselves. The truth is, I want us to listen without turning every difference into a verdict. I hope we can choose one small, honest step toward each other.`;
- return {name:avg>=4?'A Moment of Resonance':avg<=2?'A Different Perspective':'Between Questions and Answers',model:'Inspired by the interpersonal circumplex: connection and personal agency. This is a conversation prompt, not a psychological assessment.',personal:`Your average agreement: ${avg.toFixed(1)}/5. ${high.length} statements resonated strongly; ${low.length} felt unlike your experience.`,shared:visible.map(d=>({name:room.players.find(p=>p.id===d.owner)?.name,card:d.card.name,image:d.card.image,reversed:d.reversed,question:d.question,score:d.rating?.value,label:labels[(d.rating?.value||3)-1],private:d.rating?.visibility==='private'})),totalCards:room.draws.length,suggestions:['Share one thing you wish the other person understood. Let them finish before responding.','Ask what support looks like in practice, not just in theory.','Choose one small action you can both revisit next week.'],reflection,reflectionNote:'A fictional first-person reflection inspired by your responses. It does not claim to reveal anyone else’s private thoughts.',angel:room.angel};
+ return {name:avg>=4?'A Moment of Resonance':avg<=2?'A Different Perspective':'Between Questions and Answers',model:'Inspired by the interpersonal circumplex: connection and personal agency. This is a conversation prompt, not a psychological assessment.',personal:`Your average agreement: ${avg.toFixed(1)}/5. ${high.length} statements resonated strongly; ${low.length} felt unlike your experience.`,shared:visible.map(d=>({name:room.players.find(p=>p.id===d.owner)?.name,card:d.card.name,image:d.card.image,reversed:d.reversed,question:d.question,score:d.rating?.value,label:labels[(d.rating?.value||3)-1],private:d.rating?.visibility==='private'})),totalCards:room.draws.length,suggestions:['Share one thing you wish the other person understood. Let them finish before responding.','Ask what support looks like in practice, not just in theory.','Choose one small action you can both revisit next week.'],reflection,reflectionNote:'A fictional first-person reflection inspired by your responses. It does not claim to reveal anyone else’s private thoughts.',angel:room.angel,messages:room.draws.filter(d=>d.note&&(d.note.from===viewer||d.note.to===viewer)).map(d=>({from:room.players.find(p=>p.id===d.note.from)?.name,to:room.players.find(p=>p.id===d.note.to)?.name,text:d.note.text,question:d.question}))};
+}
+
+export function soloReport(room){
+ const draws=room.draws;
+ const themes=draws.map(d=>({card:d.card.name,image:d.card.image,reversed:d.reversed,question:d.question,meaning:d.meaning}));
+ const p=room.spread;const positive=['The Sun','The Star','The World','The Magician','Ace of Wands','Ace of Cups','Ace of Pentacles','Six of Wands','Nine of Cups'];
+ const challenging=['The Tower','The Devil','The Moon','Five of Cups','Ten of Swords','Eight of Swords','Five of Pentacles'];
+ const d=draws[0];let answer=null;
+ if(p==='yesno'&&d){answer=positive.includes(d.card.name)&&!d.reversed?'Leaning YES':challenging.includes(d.card.name)&&!d.reversed?'Leaning NO':'UNCLEAR / CONDITIONAL';}
+ const action=p==='choice'?'Compare the benefits and costs of both options against your priorities. Use the cards as prompts, not proof.':p==='career'?'Choose one concrete step you can complete in the next seven days.':p==='perception'?'If it feels appropriate, ask the person directly instead of assuming what they think.':'Look for evidence and practical consequences before making a decision.';
+ return {solo:true,title:SOLO_SPREADS[p].title,question:room.soloQuestion||'',optionA:room.optionA||'',optionB:room.optionB||'',answer,cards:themes,action,angel:room.angel};
 }
