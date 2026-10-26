@@ -1,16 +1,98 @@
 export const SPREADS={
- mirrors:{title:'你眼中的我',subtitle:'双向理解与关系期待',steps:[{question:'{other} 心中如何看待我？',rater:'next'},{question:'我眼中的 {other} 是什么样的？',rater:'self'},{question:'我希望与 {other} 的关系如何发展？',rater:'self'}]},
- unsaid:{title:'未说出口的话',subtitle:'安全表达与冲突缓和',steps:[{question:'我真正介意的是什么？',rater:'self'},{question:'我希望大家理解我的什么感受？',rater:'self'},{question:'为了修复关系，我愿意尝试什么？',rater:'self'}]},
- teamwork:{title:'我们的默契密码',subtitle:'团队角色与相互支持',steps:[{question:'我在团队中自然承担什么角色？',rater:'self'},{question:'我最希望团队给予怎样的支持？',rater:'self'},{question:'我能为团队贡献什么？',rater:'self'}]},
- family:{title:'家的温度',subtitle:'家庭理解与情感联结',steps:[{question:'我在家庭里通常有什么感受？',rater:'self'},{question:'我最希望家人理解什么？',rater:'self'},{question:'我希望共同创造怎样的家庭氛围？',rater:'self'}]},
- friendship:{title:'友谊的星图',subtitle:'赞赏、信任与共同记忆',steps:[{question:'朋友可能欣赏我的什么？',rater:'self'},{question:'我希望朋友看到怎样的我？',rater:'self'},{question:'我想和朋友们创造怎样的回忆？',rater:'self'}]},
- differences:{title:'分歧之间',subtitle:'价值观与建设性协商',steps:[{question:'在分歧中我最坚持什么价值？',rater:'self'},{question:'我可能忽略了什么视角？',rater:'self'},{question:'我愿意接受怎样的折中？',rater:'self'}]}
+ mirrors:{title:'Through Your Eyes',subtitle:'Understanding each other',steps:[{question:'How does {other} see me?',rater:'next'},{question:'How do I see {other}?',rater:'self'},{question:'What do I want for my relationship with {other}?',rater:'self'}]},
+ unsaid:{title:'What We Never Say',subtitle:'Honest conversations',steps:[{question:'What is really bothering me?',rater:'self'},{question:'What do I wish others understood about my feelings?',rater:'self'},{question:'What am I willing to try to repair this relationship?',rater:'self'}]},
+ teamwork:{title:'Team Chemistry',subtitle:'Working better together',steps:[{question:'What role do I naturally take in the team?',rater:'self'},{question:'What support do I need from my teammates?',rater:'self'},{question:'What can I bring to this team?',rater:'self'}]},
+ family:{title:'Family Ties',subtitle:'Care and connection',steps:[{question:'How do I usually feel around my family?',rater:'self'},{question:'What do I wish my family understood about me?',rater:'self'},{question:'What kind of home atmosphere do I want?',rater:'self'}]},
+ friendship:{title:'Friendship Compass',subtitle:'Trust and appreciation',steps:[{question:'What might my friends value in me?',rater:'self'},{question:'What side of me do I want my friends to see?',rater:'self'},{question:'What memories do I want us to make?',rater:'self'}]},
+ differences:{title:'Finding Common Ground',subtitle:'Working through differences',steps:[{question:'What matters most to me in this disagreement?',rater:'self'},{question:'What perspective might I be missing?',rater:'self'},{question:'What compromise could I accept?',rater:'self'}]},
 };
-const majors=['愚者','魔术师','女祭司','皇后','皇帝','教皇','恋人','战车','力量','隐者','命运之轮','正义','倒吊人','死神','节制','恶魔','高塔','星星','月亮','太阳','审判','世界'];
-const suits=[['权杖','行动、热情与创造力','急躁或冲动'],['圣杯','情感、共鸣与关怀','过度期待或敏感'],['宝剑','理性、清晰与边界','沟通锋利或情感距离'],['星币','稳定、现实与长期投入','固守习惯或缺少弹性']];
-const ranks=['王牌','二','三','四','五','六','七','八','九','十','侍从','骑士','皇后','国王'];
-const majorThemes=['新的开始与开放','主动创造与表达','直觉与倾听','滋养与照料','秩序与责任','共同信念','选择与联结','前进与自律','温柔的勇气','独处与反思','变化与适应','公平与平衡','换位思考','结束与转型','调和与耐心','依附与限制','冲突后的重建','希望与疗愈','不确定与想象','坦诚与喜悦','觉察与复盘','整合与圆满'];
-export const DECK=[...majors.map((name,i)=>({id:'M'+i,name,theme:majorThemes[i],shadow:'也许仍有尚未说出的顾虑'})),...suits.flatMap(([suit,theme,shadow])=>ranks.map((rank,i)=>({id:suit+i,name:suit+rank,theme,shadow})))];
-export function interpret(card,step,owner,other){const question=step.question.replaceAll('{other}',other);return `「${card.name}」象征${card.theme}。在“${question}”这个话题下，这或许提示你们可以留意${card.theme}带来的力量；与此同时，也要觉察${card.shadow}。这是一种开放的对话邀请，不是对任何人内心的事实判断。请由最了解这一想法的人判断是否符合。`;}
-const labels=['非常不符合','不太符合','中立','很符合','非常符合'];
-export function report(room,viewer){const mine=room.draws.filter(d=>d.rater===viewer);const all=room.draws;const share=all.filter(d=>d.rating?.visibility==='public'||d.rater===viewer);const avg=mine.length?mine.reduce((a,d)=>a+(d.rating?.value||3),0)/mine.length:3;const name=avg>=4?'共鸣探索型':avg<=2?'重新认识型':'成长对话型';return {name,model:'人际环形模型（IPC）的主导性与亲和性可用于组织讨论，但本游戏不构成经过验证的心理测评。',personal:`你对本次描述的平均认可度为 ${avg.toFixed(1)}/5。${avg>=4?'不少象征描述与你的体验产生了共鸣。':avg<=2?'不少描述与你的体验不符；这也是重要的发现。':'你的回应显示出多样和不确定的感受。'} 不要将随机牌面视作他人真实心理的证据。`,shared:share.map(d=>({name:room.players.find(p=>p.id===d.owner)?.name,card:d.card.name,question:d.question,score:d.rating?.value,label:labels[(d.rating?.value||3)-1],private:d.rating?.visibility==='private'})),suggestions:['每个人轮流分享一件最近希望被理解的小事，不打断对方。','遇到分歧时，先用自己的话复述对方观点，再表达不同意见。','每周安排一次十分钟的主动倾听，并尊重不愿分享的边界。']};}
+export const DECK=[
+ {'id': 'M0', 'name': 'The Fool', 'cn': '愚者', 'meaning': 'You may be ready to try something new, even if you are nervous.', 'image': '/cards/M0.svg'},
+ {'id': 'M1', 'name': 'The Magician', 'cn': '魔术师', 'meaning': 'You have more influence over this situation than you think.', 'image': '/cards/M1.svg'},
+ {'id': 'M2', 'name': 'The High Priestess', 'cn': '女祭司', 'meaning': 'You might be keeping important feelings to yourself.', 'image': '/cards/M2.svg'},
+ {'id': 'M3', 'name': 'The Empress', 'cn': '皇后', 'meaning': 'You may want more care, affection, or attention.', 'image': '/cards/M3.svg'},
+ {'id': 'M4', 'name': 'The Emperor', 'cn': '皇帝', 'meaning': 'You may feel safer when expectations and boundaries are clear.', 'image': '/cards/M4.svg'},
+ {'id': 'M5', 'name': 'The Hierophant', 'cn': '教皇', 'meaning': 'You might be following old rules that no longer fit you.', 'image': '/cards/M5.svg'},
+ {'id': 'M6', 'name': 'The Lovers', 'cn': '恋人', 'meaning': 'You may be facing a choice between what you want and what others expect.', 'image': '/cards/M6.svg'},
+ {'id': 'M7', 'name': 'The Chariot', 'cn': '战车', 'meaning': 'You want to move forward, but you may be pushing too hard.', 'image': '/cards/M7.svg'},
+ {'id': 'M8', 'name': 'Strength', 'cn': '力量', 'meaning': 'You may need patience instead of trying to win an argument.', 'image': '/cards/M8.svg'},
+ {'id': 'M9', 'name': 'The Hermit', 'cn': '隐者', 'meaning': 'You might need some space to understand what you really feel.', 'image': '/cards/M9.svg'},
+ {'id': 'M10', 'name': 'Wheel of Fortune', 'cn': '命运之轮', 'meaning': 'Something in this relationship is changing, and you cannot control all of it.', 'image': '/cards/M10.svg'},
+ {'id': 'M11', 'name': 'Justice', 'cn': '正义', 'meaning': 'You may want things to feel more fair and balanced.', 'image': '/cards/M11.svg'},
+ {'id': 'M12', 'name': 'The Hanged Man', 'cn': '倒吊人', 'meaning': 'You may need to look at this from the other person’s point of view.', 'image': '/cards/M12.svg'},
+ {'id': 'M13', 'name': 'Death', 'cn': '死神', 'meaning': 'You might be ready to leave an old pattern behind.', 'image': '/cards/M13.svg'},
+ {'id': 'M14', 'name': 'Temperance', 'cn': '节制', 'meaning': 'You may need to find a middle ground instead of going to extremes.', 'image': '/cards/M14.svg'},
+ {'id': 'M15', 'name': 'The Devil', 'cn': '恶魔', 'meaning': 'You may be holding on even when the relationship feels unhealthy or exhausting.', 'image': '/cards/M15.svg'},
+ {'id': 'M16', 'name': 'The Tower', 'cn': '高塔', 'meaning': 'A sudden argument or realization may have shaken your trust.', 'image': '/cards/M16.svg'},
+ {'id': 'M17', 'name': 'The Star', 'cn': '星星', 'meaning': 'You still have hope that things can get better.', 'image': '/cards/M17.svg'},
+ {'id': 'M18', 'name': 'The Moon', 'cn': '月亮', 'meaning': 'You may be unsure what the other person really means.', 'image': '/cards/M18.svg'},
+ {'id': 'M19', 'name': 'The Sun', 'cn': '太阳', 'meaning': 'You want more honesty, warmth, and simple good moments together.', 'image': '/cards/M19.svg'},
+ {'id': 'M20', 'name': 'Judgement', 'cn': '审判', 'meaning': 'You may be ready to own your part and have an honest conversation.', 'image': '/cards/M20.svg'},
+ {'id': 'M21', 'name': 'The World', 'cn': '世界', 'meaning': 'You may be reaching a point where things finally make more sense.', 'image': '/cards/M21.svg'},
+ {'id': 'Wands0', 'name': 'Ace of Wands', 'cn': '权杖王牌', 'meaning': 'You want action and progress, but may be getting impatient. A fresh start is possible.', 'image': '/cards/Wands0.svg'},
+ {'id': 'Wands1', 'name': 'Two of Wands', 'cn': '权杖二', 'meaning': 'You want action and progress, but may be getting impatient. Two needs or perspectives may be pulling you in different directions.', 'image': '/cards/Wands1.svg'},
+ {'id': 'Wands2', 'name': 'Three of Wands', 'cn': '权杖三', 'meaning': 'You want action and progress, but may be getting impatient. Cooperation could make a real difference.', 'image': '/cards/Wands2.svg'},
+ {'id': 'Wands3', 'name': 'Four of Wands', 'cn': '权杖四', 'meaning': 'You want action and progress, but may be getting impatient. You may be holding tightly to what feels safe.', 'image': '/cards/Wands3.svg'},
+ {'id': 'Wands4', 'name': 'Five of Wands', 'cn': '权杖五', 'meaning': 'You want action and progress, but may be getting impatient. There may be tension you need to address.', 'image': '/cards/Wands4.svg'},
+ {'id': 'Wands5', 'name': 'Six of Wands', 'cn': '权杖六', 'meaning': 'You want action and progress, but may be getting impatient. Notice whether effort is balanced.', 'image': '/cards/Wands5.svg'},
+ {'id': 'Wands6', 'name': 'Seven of Wands', 'cn': '权杖七', 'meaning': 'You want action and progress, but may be getting impatient. You may need to stand up for what matters.', 'image': '/cards/Wands6.svg'},
+ {'id': 'Wands7', 'name': 'Eight of Wands', 'cn': '权杖八', 'meaning': 'You want action and progress, but may be getting impatient. Things could move faster than expected.', 'image': '/cards/Wands7.svg'},
+ {'id': 'Wands8', 'name': 'Nine of Wands', 'cn': '权杖九', 'meaning': 'You want action and progress, but may be getting impatient. You might be tired of carrying this alone.', 'image': '/cards/Wands8.svg'},
+ {'id': 'Wands9', 'name': 'Ten of Wands', 'cn': '权杖十', 'meaning': 'You want action and progress, but may be getting impatient. A cycle may be reaching its limit.', 'image': '/cards/Wands9.svg'},
+ {'id': 'Wands10', 'name': 'Page of Wands', 'cn': '权杖侍从', 'meaning': 'You want action and progress, but may be getting impatient. Try asking questions before assuming you know.', 'image': '/cards/Wands10.svg'},
+ {'id': 'Wands11', 'name': 'Knight of Wands', 'cn': '权杖骑士', 'meaning': 'You want action and progress, but may be getting impatient. You may be tempted to act before thinking it through.', 'image': '/cards/Wands11.svg'},
+ {'id': 'Wands12', 'name': 'Queen of Wands', 'cn': '权杖皇后', 'meaning': 'You want action and progress, but may be getting impatient. You may already know what kind of care is needed.', 'image': '/cards/Wands12.svg'},
+ {'id': 'Wands13', 'name': 'King of Wands', 'cn': '权杖国王', 'meaning': 'You want action and progress, but may be getting impatient. You might need to lead by example.', 'image': '/cards/Wands13.svg'},
+ {'id': 'Cups0', 'name': 'Ace of Cups', 'cn': '圣杯王牌', 'meaning': 'Your feelings matter, and you may want more emotional support. A fresh start is possible.', 'image': '/cards/Cups0.svg'},
+ {'id': 'Cups1', 'name': 'Two of Cups', 'cn': '圣杯二', 'meaning': 'Your feelings matter, and you may want more emotional support. Two needs or perspectives may be pulling you in different directions.', 'image': '/cards/Cups1.svg'},
+ {'id': 'Cups2', 'name': 'Three of Cups', 'cn': '圣杯三', 'meaning': 'Your feelings matter, and you may want more emotional support. Cooperation could make a real difference.', 'image': '/cards/Cups2.svg'},
+ {'id': 'Cups3', 'name': 'Four of Cups', 'cn': '圣杯四', 'meaning': 'Your feelings matter, and you may want more emotional support. You may be holding tightly to what feels safe.', 'image': '/cards/Cups3.svg'},
+ {'id': 'Cups4', 'name': 'Five of Cups', 'cn': '圣杯五', 'meaning': 'Your feelings matter, and you may want more emotional support. There may be tension you need to address.', 'image': '/cards/Cups4.svg'},
+ {'id': 'Cups5', 'name': 'Six of Cups', 'cn': '圣杯六', 'meaning': 'Your feelings matter, and you may want more emotional support. Notice whether effort is balanced.', 'image': '/cards/Cups5.svg'},
+ {'id': 'Cups6', 'name': 'Seven of Cups', 'cn': '圣杯七', 'meaning': 'Your feelings matter, and you may want more emotional support. You may need to stand up for what matters.', 'image': '/cards/Cups6.svg'},
+ {'id': 'Cups7', 'name': 'Eight of Cups', 'cn': '圣杯八', 'meaning': 'Your feelings matter, and you may want more emotional support. Things could move faster than expected.', 'image': '/cards/Cups7.svg'},
+ {'id': 'Cups8', 'name': 'Nine of Cups', 'cn': '圣杯九', 'meaning': 'Your feelings matter, and you may want more emotional support. You might be tired of carrying this alone.', 'image': '/cards/Cups8.svg'},
+ {'id': 'Cups9', 'name': 'Ten of Cups', 'cn': '圣杯十', 'meaning': 'Your feelings matter, and you may want more emotional support. A cycle may be reaching its limit.', 'image': '/cards/Cups9.svg'},
+ {'id': 'Cups10', 'name': 'Page of Cups', 'cn': '圣杯侍从', 'meaning': 'Your feelings matter, and you may want more emotional support. Try asking questions before assuming you know.', 'image': '/cards/Cups10.svg'},
+ {'id': 'Cups11', 'name': 'Knight of Cups', 'cn': '圣杯骑士', 'meaning': 'Your feelings matter, and you may want more emotional support. You may be tempted to act before thinking it through.', 'image': '/cards/Cups11.svg'},
+ {'id': 'Cups12', 'name': 'Queen of Cups', 'cn': '圣杯皇后', 'meaning': 'Your feelings matter, and you may want more emotional support. You may already know what kind of care is needed.', 'image': '/cards/Cups12.svg'},
+ {'id': 'Cups13', 'name': 'King of Cups', 'cn': '圣杯国王', 'meaning': 'Your feelings matter, and you may want more emotional support. You might need to lead by example.', 'image': '/cards/Cups13.svg'},
+ {'id': 'Swords0', 'name': 'Ace of Swords', 'cn': '宝剑王牌', 'meaning': 'A direct conversation or clearer boundary may be needed. A fresh start is possible.', 'image': '/cards/Swords0.svg'},
+ {'id': 'Swords1', 'name': 'Two of Swords', 'cn': '宝剑二', 'meaning': 'A direct conversation or clearer boundary may be needed. Two needs or perspectives may be pulling you in different directions.', 'image': '/cards/Swords1.svg'},
+ {'id': 'Swords2', 'name': 'Three of Swords', 'cn': '宝剑三', 'meaning': 'A direct conversation or clearer boundary may be needed. Cooperation could make a real difference.', 'image': '/cards/Swords2.svg'},
+ {'id': 'Swords3', 'name': 'Four of Swords', 'cn': '宝剑四', 'meaning': 'A direct conversation or clearer boundary may be needed. You may be holding tightly to what feels safe.', 'image': '/cards/Swords3.svg'},
+ {'id': 'Swords4', 'name': 'Five of Swords', 'cn': '宝剑五', 'meaning': 'A direct conversation or clearer boundary may be needed. There may be tension you need to address.', 'image': '/cards/Swords4.svg'},
+ {'id': 'Swords5', 'name': 'Six of Swords', 'cn': '宝剑六', 'meaning': 'A direct conversation or clearer boundary may be needed. Notice whether effort is balanced.', 'image': '/cards/Swords5.svg'},
+ {'id': 'Swords6', 'name': 'Seven of Swords', 'cn': '宝剑七', 'meaning': 'A direct conversation or clearer boundary may be needed. You may need to stand up for what matters.', 'image': '/cards/Swords6.svg'},
+ {'id': 'Swords7', 'name': 'Eight of Swords', 'cn': '宝剑八', 'meaning': 'A direct conversation or clearer boundary may be needed. Things could move faster than expected.', 'image': '/cards/Swords7.svg'},
+ {'id': 'Swords8', 'name': 'Nine of Swords', 'cn': '宝剑九', 'meaning': 'A direct conversation or clearer boundary may be needed. You might be tired of carrying this alone.', 'image': '/cards/Swords8.svg'},
+ {'id': 'Swords9', 'name': 'Ten of Swords', 'cn': '宝剑十', 'meaning': 'A direct conversation or clearer boundary may be needed. A cycle may be reaching its limit.', 'image': '/cards/Swords9.svg'},
+ {'id': 'Swords10', 'name': 'Page of Swords', 'cn': '宝剑侍从', 'meaning': 'A direct conversation or clearer boundary may be needed. Try asking questions before assuming you know.', 'image': '/cards/Swords10.svg'},
+ {'id': 'Swords11', 'name': 'Knight of Swords', 'cn': '宝剑骑士', 'meaning': 'A direct conversation or clearer boundary may be needed. You may be tempted to act before thinking it through.', 'image': '/cards/Swords11.svg'},
+ {'id': 'Swords12', 'name': 'Queen of Swords', 'cn': '宝剑皇后', 'meaning': 'A direct conversation or clearer boundary may be needed. You may already know what kind of care is needed.', 'image': '/cards/Swords12.svg'},
+ {'id': 'Swords13', 'name': 'King of Swords', 'cn': '宝剑国王', 'meaning': 'A direct conversation or clearer boundary may be needed. You might need to lead by example.', 'image': '/cards/Swords13.svg'},
+ {'id': 'Pentacles0', 'name': 'Ace of Pentacles', 'cn': '星币王牌', 'meaning': 'You may be looking for consistency and practical effort, not just promises. A fresh start is possible.', 'image': '/cards/Pentacles0.svg'},
+ {'id': 'Pentacles1', 'name': 'Two of Pentacles', 'cn': '星币二', 'meaning': 'You may be looking for consistency and practical effort, not just promises. Two needs or perspectives may be pulling you in different directions.', 'image': '/cards/Pentacles1.svg'},
+ {'id': 'Pentacles2', 'name': 'Three of Pentacles', 'cn': '星币三', 'meaning': 'You may be looking for consistency and practical effort, not just promises. Cooperation could make a real difference.', 'image': '/cards/Pentacles2.svg'},
+ {'id': 'Pentacles3', 'name': 'Four of Pentacles', 'cn': '星币四', 'meaning': 'You may be looking for consistency and practical effort, not just promises. You may be holding tightly to what feels safe.', 'image': '/cards/Pentacles3.svg'},
+ {'id': 'Pentacles4', 'name': 'Five of Pentacles', 'cn': '星币五', 'meaning': 'You may be looking for consistency and practical effort, not just promises. There may be tension you need to address.', 'image': '/cards/Pentacles4.svg'},
+ {'id': 'Pentacles5', 'name': 'Six of Pentacles', 'cn': '星币六', 'meaning': 'You may be looking for consistency and practical effort, not just promises. Notice whether effort is balanced.', 'image': '/cards/Pentacles5.svg'},
+ {'id': 'Pentacles6', 'name': 'Seven of Pentacles', 'cn': '星币七', 'meaning': 'You may be looking for consistency and practical effort, not just promises. You may need to stand up for what matters.', 'image': '/cards/Pentacles6.svg'},
+ {'id': 'Pentacles7', 'name': 'Eight of Pentacles', 'cn': '星币八', 'meaning': 'You may be looking for consistency and practical effort, not just promises. Things could move faster than expected.', 'image': '/cards/Pentacles7.svg'},
+ {'id': 'Pentacles8', 'name': 'Nine of Pentacles', 'cn': '星币九', 'meaning': 'You may be looking for consistency and practical effort, not just promises. You might be tired of carrying this alone.', 'image': '/cards/Pentacles8.svg'},
+ {'id': 'Pentacles9', 'name': 'Ten of Pentacles', 'cn': '星币十', 'meaning': 'You may be looking for consistency and practical effort, not just promises. A cycle may be reaching its limit.', 'image': '/cards/Pentacles9.svg'},
+ {'id': 'Pentacles10', 'name': 'Page of Pentacles', 'cn': '星币侍从', 'meaning': 'You may be looking for consistency and practical effort, not just promises. Try asking questions before assuming you know.', 'image': '/cards/Pentacles10.svg'},
+ {'id': 'Pentacles11', 'name': 'Knight of Pentacles', 'cn': '星币骑士', 'meaning': 'You may be looking for consistency and practical effort, not just promises. You may be tempted to act before thinking it through.', 'image': '/cards/Pentacles11.svg'},
+ {'id': 'Pentacles12', 'name': 'Queen of Pentacles', 'cn': '星币皇后', 'meaning': 'You may be looking for consistency and practical effort, not just promises. You may already know what kind of care is needed.', 'image': '/cards/Pentacles12.svg'},
+ {'id': 'Pentacles13', 'name': 'King of Pentacles', 'cn': '星币国王', 'meaning': 'You may be looking for consistency and practical effort, not just promises. You might need to lead by example.', 'image': '/cards/Pentacles13.svg'},
+];
+export function interpret(card){return card.meaning;}
+const labels=["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"];
+export function report(room,viewer){
+ const mine=room.draws.filter(d=>d.rater===viewer);const share=room.draws.filter(d=>d.rating?.visibility==="public"||d.rater===viewer);
+ const avg=mine.length?mine.reduce((a,d)=>a+(d.rating?.value||3),0)/mine.length:3;
+ const name=avg>=4?"Finding Resonance / 产生共鸣":avg<=2?"Seeing Things Differently / 重新认识":"Still Figuring It Out / 共同探索";
+ const picked=mine.filter(d=>d.rating?.value>=4).slice(0,2);const topic=picked.length?picked.map(d=>d.card.meaning.replace(/[.!?]$/," ").toLowerCase()).join("and "):"we do not always understand each other right away";
+ const reflection=`I know I don’t always say what I mean. Sometimes ${topic}. The truth is, I want us to feel heard without having to defend every feeling. I hope we can be more honest, more patient, and willing to meet each other halfway.`;
+ return {name,model:"Inspired by the interpersonal circumplex (agency and connection). This is a conversation game, not a psychological assessment. / 参考人际环形模型，不属于心理测评。",personal:`Your average agreement: ${avg.toFixed(1)}/5. ${avg>=4?"Several prompts felt true to you.":avg<=2?"Many prompts did not match your experience, and that is useful to know.":"Your responses were mixed, which is completely okay."} / 你的平均认同度：${avg.toFixed(1)}/5。`,shared:share.map(d=>({name:room.players.find(p=>p.id===d.owner)?.name,card:d.card.name,question:d.question,score:d.rating?.value,label:labels[(d.rating?.value||3)-1],private:d.rating?.visibility==="private"})),suggestions:["Take turns sharing one thing you wish the other person understood. No interruptions.","Before disagreeing, repeat what you heard in your own words.","Ask: What is one small thing I could do differently this week?"],reflection,reflectionNote:"A sample first-person message inspired by YOUR ratings, not a claim about anyone else’s thoughts. / 基于你本人评分的示例表达，并不代表他人的真实想法。"};
+}
